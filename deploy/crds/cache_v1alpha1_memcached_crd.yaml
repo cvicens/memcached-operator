@@ -1,0 +1,20 @@
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  creationTimestamp: null
+  name: memcacheds.cache.cvicens.com
+spec:
+  group: cache.cvicens.com
+  names:
+    kind: Memcached
+    listKind: MemcachedList
+    plural: memcacheds
+    singular: memcached
+  scope: Namespaced
+  subresources:
+    status: {}
+  version: v1alpha1
+  versions:
+  - name: v1alpha1
+    served: true
+    storage: true
