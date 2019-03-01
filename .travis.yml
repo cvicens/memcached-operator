@@ -1,0 +1,39 @@
+language: go
+sudo: required
+
+go_import_path: github.com/cvicens/memcached-operator
+
+env:
+  - CHANGE_MINIKUBE_NONE_USER=true
+
+install:
+  # setup operator-sdk
+  - go get github.com/golang/dep/cmd/dep
+  - mkdir -p $GOPATH/src/github.com/operator-framework
+  - cd $GOPATH/src/github.com/operator-framework
+  - git clone https://github.com/operator-framework/operator-sdk
+  - cd operator-sdk
+  - git checkout master
+  - make dep
+  - make install
+  - cd $GOPATH/src/github.com/cvicens/memcached-operator
+  - operator-sdk build quay.io/cvicens/memcached-operator
+
+jobs:
+  include:
+    - stage: deploy
+      script:
+        - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin quay.io
+        - docker tag quay.io/cvicens/memcached-operator quay.io/cvicens/memcached-operator
+        - docker push quay.io/cvicens/memcached-operator
+
+    - stage: deploy-release
+      script:
+        - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin quay.io
+        - docker tag quay.io/cvicens/memcached-operator quay.io/cvicens/memcached-operator:${TRAVIS_TAG}
+        - docker push quay.io/cvicens/memcached-operator:${TRAVIS_TAG}
+stages:
+  - name: deploy
+    if: (tag IS blank) AND (branch = master) AND (type = push)
+  - name: deploy-release
+    if: (tag IS present) AND (type = push)

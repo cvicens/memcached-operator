@@ -2,4 +2,4 @@
 - version: v1alpha1
   group: cache.cvicens.com
   kind: Memcached
-  role: /opt/ansible/roles/memcached
+  role: /opt/ansible/roles/dymurray.memcached_operator_role
