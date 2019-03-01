@@ -17,21 +17,21 @@ install:
   - make dep
   - make install
   - cd $GOPATH/src/github.com/cvicens/memcached-operator
-  - operator-sdk build quay.io/cvicens/memcached-operator
+  - operator-sdk build memcached-operator
 
 jobs:
   include:
     - stage: deploy
       script:
-        - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin quay.io
-        - docker tag quay.io/cvicens/memcached-operator quay.io/cvicens/memcached-operator
-        - docker push quay.io/cvicens/memcached-operator
+        - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+        - docker tag memcached-operator cvicens/memcached-operator
+        - docker push cvicens/memcached-operator
 
     - stage: deploy-release
       script:
-        - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin quay.io
-        - docker tag quay.io/cvicens/memcached-operator quay.io/cvicens/memcached-operator:${TRAVIS_TAG}
-        - docker push quay.io/cvicens/memcached-operator:${TRAVIS_TAG}
+        - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+        - docker tag memcached-operator cvicens/memcached-operator:${TRAVIS_TAG}
+        - docker push cvicens/memcached-operator:${TRAVIS_TAG}
 stages:
   - name: deploy
     if: (tag IS blank) AND (branch = master) AND (type = push)
